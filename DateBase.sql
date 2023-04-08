@@ -49,11 +49,11 @@ WHERE  age = (
     SELECT MIN(age)
     FROM employeeList
     );
-SELECT firs_name, age
+SELECT firs_name, MAX(age)
 FROM employeeList
-WHERE age IN  (SELECT MAX(age) FROM employeeList
-GROUP BY firs_name HAVING COUNT(firs_name) > 1)
+group by firs_name HAVING COUNT(firs_name) > 1
 ORDER BY 2;
+
 
 
 -- DROP TABLE employeeList;
