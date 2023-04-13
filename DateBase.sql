@@ -1,7 +1,7 @@
 CREATE DATABASE skypro;
 CREATE TABLE employeeList
 (
-    id BIGSERIAL NOT NULL PRIMARY KEY,
+    id BIGSERIAL NOT NULL PRIMARY KEY ,
     firs_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     gender VARCHAR(6) NOT NULL,
@@ -24,36 +24,47 @@ INSERT INTO employeeList(firs_name, last_name, GENDER, age)
 VALUES ('Robert','Ramsey', 'male', 35);
 INSERT INTO employeeList (firs_name, last_name, gender, age)
 VALUES ('Billy', 'Strickland', 'male', 65);
-SELECT * FROM employeeList;
-SELECT
-firs_name AS имя,
-last_name AS фамилия
-FROM employeeList;
-SELECT * FROM employeeList
-WHERE age <=30 OR age >=50;
-SELECT * FROM employeeList
-    WHERE age
-BETWEEN 30 AND 50;
-SELECT * FROM employeeList
-    WHERE firs_name
-LIKE   '%____%';
-UPDATE employeeList SET firs_name = 'Juanita', last_name = 'Blake', gender = 'female', age = 21 WHERE id = 2;
-UPDATE employeeList SET firs_name = 'Billy', last_name = 'Ramsey', gender = 'male', age = 35 WHERE id = 5;
-SELECT firs_name,
- SUM(age) AS суммарный_возраст
-FROM employeeList
-    GROUP BY firs_name;
-SELECT firs_name, age
-FROM employeeList
-WHERE  age = (
-    SELECT MIN(age)
-    FROM employeeList
-    );
-SELECT firs_name, MAX(age)
-FROM employeeList
-group by firs_name HAVING COUNT(firs_name) > 1
-ORDER BY 2;
+ALTER TABLE employeeList
+    ADD id_city BIGSERIAL UNIQUE;
+CREATE TABLE city(
+                     id BIGSERIAL NOT NULL PRIMARY KEY,
+                     id_city BIGSERIAL UNIQUE,
+                     city_name VARCHAR(50) NOT NULL,
+                     FOREIGN KEY (id_city) REFERENCES employeeList(id_city)
+);
 
 
+INSERT INTO city ( city_name)
+VALUES ( 'Kazan');
+INSERT INTO city( city_name )
+VALUES ( 'Moscow');
+INSERT INTO city( city_name)
+VALUES ('Saint Petersburg');
+INSERT INTO city( city_name)
+VALUES ( 'Ekaterinburg');
+INSERT INTO city( city_name)
+VALUES ( 'Samara');
+SELECT firs_name, last_name, city
+FROM employeeList
+         INNER JOIN city
+                    ON employeeList.id_city = city.id_city;
+SELECT firs_name, last_name, city_name
+FROM employeeList
+         RIGHT  JOIN city
+                     ON employeeList.id = city.id_city;
 
--- DROP TABLE employeeList;
+
+SELECT firs_name, last_name, city_name
+FROM employeeList
+         FULL OUTER  JOIN city
+                          ON employeeList.id = city.id_city;
+
+UPDATE city SET id = 6 WHERE id = 1;
+SELECT firs_name, city_name
+FROM employeeList
+         FULL OUTER  JOIN city
+                          ON employeeList.id = city.id;
+SELECT firs_name, city_name
+FROM employeeList
+         RIGHT JOIN city
+                    ON city.id  = employeeList.id WHERE employeeList.firs_name IS NULL;
